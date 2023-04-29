@@ -42,6 +42,10 @@ chrome.storage.local.get(["twitchMessageUser"]).then(async (result) => {
   ).innerHTML = `@${result?.twitchMessageUser}`;
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  alert("storage chenaged");
+chrome.storage.local.get(["twitchMessages"]).then(async (result) => {
+  if (result?.twitchMessages) {
+    document.querySelector("#cmessage").innerHTML = `popop@${JSON.stringify({
+      msg: result?.twitchMessages,
+    })}`;
+  }
 });

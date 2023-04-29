@@ -18,18 +18,50 @@
 //   });
 // });
 
+chrome.runtime.onInstalled.addListener(async () => {
+  console.log(chrome.runtime.getManifest().content_scripts);
+});
+
+console.log("does this even work?");
+
 // listen for messages
-chrome.runtime.onMessage.addListener(function (
-  request,
-  sender,
-  sendResponse
-) {});
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log("pog opened");
+});
 
 const extensions = "https://developer.chrome.com/docs/extensions";
 const webstore = "https://developer.chrome.com/docs/webstore";
 
+// chrome.storage.onChanged.addListener((changes, namespace) => {
+//   console.log("storage changed");
+// });
+
+chrome.tabs.onActivated.addListener(async (info) => {
+  console.log(chrome.runtime.getManifest().content_scripts);
+  chrome.tabs.get(info.tabId, (tab) => {
+    if (tab.url.includes("twitch.tv")) {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["script.js"],
+      });
+    }
+  });
+});
+// chrome.runtime.onInstalled.addListener(async () => {
+//   let [tab] = await chrome.tabs.query({
+//     active: true,
+//     lastFocusedWindow: true,
+//   });
+
+// });
+
 // When the user clicks on the extension action
 chrome.action.onClicked.addListener(async (tab) => {
+  chrome.action.setPopup({
+    popup: "index.html",
+    tabId: tab.id,
+  });
+
   // if (tab.url.startsWith(extensions) || tab.url.startsWith(webstore)) {
   //   // We retrieve the action badge to check if the extension is 'ON' or 'OFF'
   //   const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
